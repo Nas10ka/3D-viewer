@@ -44,18 +44,22 @@ const ThreeScene = () => {
         scene.add(hemiLight);
 
         renderer.setSize(container.clientWidth, container.clientHeight);
-        if (!container?.hasChildNodes()) {
-            container.appendChild(renderer.domElement);
-        }
+        container.appendChild(renderer.domElement);
+        let frameId: number;
         const animate = (t = 0) => {
-            requestAnimationFrame(animate);
+            frameId = requestAnimationFrame(animate);
             // mesh.rotation.y = t * 0.0001;
-            renderer.render(scene, camera);
             controlers.update();
+            renderer.render(scene, camera);
         }
         animate();
         renderer.render(scene, camera);
-
+        return () => {
+            cancelAnimationFrame(frameId); 
+            controlers.dispose();
+            geo.dispose();
+            renderer.domElement.remove();
+        }
 
     }, [])
 
